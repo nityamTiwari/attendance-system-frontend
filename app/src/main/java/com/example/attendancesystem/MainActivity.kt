@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 
-
+import com.example.attendancesystem.ui.theme.AttendanceSystemTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -14,7 +14,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
+            AttendanceSystemTheme {
+                AttendanceApp()
+            }
         }
     }
 }
+
+//@Composable
+//fun AttendanceApp() {
+//    Text("Attendance System")
+//}

@@ -44,4 +44,9 @@ object  NetworkModule{
         return retrofit.create(AuthApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideAttendanceApi(retrofit: Retrofit): AttendanceApi{
+        return  retrofit.create(AttendanceApi::class.java)
+    }
 }

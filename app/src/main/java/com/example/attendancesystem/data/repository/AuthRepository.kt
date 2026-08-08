@@ -42,5 +42,29 @@ class AuthRepository @Inject constructor(
     }
 
 
+    suspend fun register(
+        request: RegisterRequest
+    ): NetworkResult<RegisterResponse> {
+
+        return try{
+
+            val response = authApi.register(request)
+
+            if(response.isSuccessful && response.body()!=null){
+                NetworkResult.Success(response.body()!!)
+            }else{
+                NetworkResult.Error(
+                    ErrorParser.parse(
+                        response.errorBody()?.string()
+                    )
+                )
+            }
+        }catch (e: Exception) {
+
+            NetworkResult.Error(
+                e.message ?: "Something went wrong"
+            )
+        }
+    }
 
 }
