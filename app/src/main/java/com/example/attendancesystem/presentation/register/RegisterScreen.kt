@@ -141,18 +141,17 @@ fun RegisterScreen(
                 shape = MaterialTheme.shapes.medium
             )
 
-            // --- REPLACED: DOB Field with DatePicker Trigger ---
+           //date picker
             val dobInteractionSource = remember { MutableInteractionSource() }
             val isDobPressed by dobInteractionSource.collectIsPressedAsState()
 
-            // Open picker if the user taps anywhere on the text field
             if (isDobPressed) {
                 showDatePicker = true
             }
 
             OutlinedTextField(
                 value = uiState.dob,
-                onValueChange = {}, // Read-only, so this is empty
+                onValueChange = {},
                 readOnly = true,
                 label = { Text("Date of Birth") },
                 trailingIcon = {
@@ -166,9 +165,8 @@ fun RegisterScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = MaterialTheme.shapes.medium,
-                interactionSource = dobInteractionSource // Captures the click on the field
+                interactionSource = dobInteractionSource
             )
-            // ---------------------------------------------------
 
             OutlinedTextField(
                 value = uiState.password,

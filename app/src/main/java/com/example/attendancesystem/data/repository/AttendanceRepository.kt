@@ -5,10 +5,8 @@ import com.example.attendancesystem.data.model.response.ClockInResponse
 import com.example.attendancesystem.data.model.response.ClockOutResponse
 import com.example.attendancesystem.data.model.response.TodayAttendanceResponse
 import com.example.attendancesystem.network.AttendanceApi
-import com.example.attendancesystem.network.ErrorParser
+import com.example.attendancesystem.network.NetworkErrorMapper
 import com.example.attendancesystem.network.NetworkResult
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,26 +16,20 @@ class AttendanceRepository @Inject constructor(
     private val attendanceApi: AttendanceApi
 ) {
 
-    /**
-     * The backend has no GET /today endpoint, so "today" is derived from the full
-     * attendance history: find the entry whose attendanceDate matches today's date,
-     * or fall back to a client-side NOT_STARTED state if there isn't one yet.
-     */
     suspend fun getTodayAttendance(): NetworkResult<TodayAttendanceResponse> {
 
-        return when (val result = getHistory()) {
+        return try {
 
-            is NetworkResult.Success -> {
-                val todayDate = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
-                val todayRecord = result.data.firstOrNull { it.attendanceDate == todayDate }
+            val response = attendanceApi.getTodayAttendance()
 
-                val today = todayRecord?.let { TodayAttendanceResponse.from(it) }
-                    ?: TodayAttendanceResponse.notStarted(todayDate)
-
-                NetworkResult.Success(today)
+            if (response.isSuccessful && response.body() != null) {
+                NetworkResult.Success(response.body()!!)
+            } else {
+                NetworkErrorMapper.fromResponse(response)
             }
+        } catch (e: Exception) {
 
-            is NetworkResult.Error -> NetworkResult.Error(result.message)
+            NetworkErrorMapper.fromException(e)
         }
     }
 
@@ -50,15 +42,11 @@ class AttendanceRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
             } else {
-                NetworkResult.Error(
-                    ErrorParser.parse(
-                        response.errorBody()?.string()
-                    )
-                )
+                NetworkErrorMapper.fromResponse(response)
             }
         } catch (e: Exception) {
 
-            NetworkResult.Error(e.message ?: "Something went wrong")
+            NetworkErrorMapper.fromException(e)
         }
     }
 
@@ -71,16 +59,11 @@ class AttendanceRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
             } else {
-
-                NetworkResult.Error(
-                    ErrorParser.parse(
-                        response.errorBody()?.string()
-                    )
-                )
+                NetworkErrorMapper.fromResponse(response)
             }
         } catch (e: Exception) {
 
-            NetworkResult.Error(e.message ?: "Something went wrong")
+            NetworkErrorMapper.fromException(e)
         }
     }
 
@@ -93,16 +76,12 @@ class AttendanceRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
             } else {
-                NetworkResult.Error(
-                    ErrorParser.parse(
-                        response.errorBody()?.string()
-                    )
-                )
+                NetworkErrorMapper.fromResponse(response)
             }
 
         } catch (e: Exception) {
 
-            NetworkResult.Error(e.message ?: "Something went wrong")
+            NetworkErrorMapper.fromException(e)
 
         }
 

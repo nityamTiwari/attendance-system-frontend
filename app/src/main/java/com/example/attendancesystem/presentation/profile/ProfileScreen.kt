@@ -8,6 +8,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Logout
+import com.example.attendancesystem.data.model.LocalProfile
+import com.example.attendancesystem.presentation.components.avatarInitials
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.attendancesystem.data.model.LocalProfile
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,12 +51,7 @@ fun ProfileScreen(
 
             ProfileHeader(profile)
 
-            // NOTE: the backend doesn't have a GET /me or /profile endpoint yet, so these
-            // values come from what was submitted on the Register screen (cached locally),
-            // not from the server. A user who only ever logged in (never registered on this
-            // device) will only have their email. Swap ProfileViewModel's TokenManager.profile
-            // read for a real API call once the backend adds an endpoint - the UI here won't
-            // need to change since it already just renders a LocalProfile-shaped state.
+            //local data i want to create profile api
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
@@ -106,7 +102,7 @@ private fun ProfileHeader(profile: LocalProfile) {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = initials(profile),
+                text = avatarInitials(profile.firstName, profile.lastName),
                 style = MaterialTheme.typography.headlineSmall,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -143,11 +139,4 @@ private fun fullName(profile: LocalProfile): String {
         .joinToString(" ")
         .trim()
     return name.ifBlank { "--" }
-}
-
-private fun initials(profile: LocalProfile): String {
-    val first = profile.firstName?.firstOrNull()?.uppercaseChar()
-    val last = profile.lastName?.firstOrNull()?.uppercaseChar()
-    val combined = listOfNotNull(first, last).joinToString("")
-    return combined.ifBlank { "?" }
 }

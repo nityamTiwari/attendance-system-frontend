@@ -11,7 +11,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AuthInterceptor @Inject constructor(
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
+    private val sessionManager: SessionManager
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -34,7 +35,15 @@ class AuthInterceptor @Inject constructor(
             } else {
                 request
             }
-   return chain.proceed(newRequest)
+
+        val response = chain.proceed(newRequest)
+
+
+        if (response.code == 401) {
+            sessionManager.notifySessionExpired()
+        }
+
+        return response
 
     }
 

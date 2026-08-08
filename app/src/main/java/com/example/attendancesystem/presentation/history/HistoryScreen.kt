@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.attendancesystem.data.model.response.AttendanceResponse
+import com.example.attendancesystem.presentation.components.formatAttendanceDate
+import com.example.attendancesystem.presentation.components.formatClockTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,15 +116,16 @@ fun HistoryItemCard(record: AttendanceResponse) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = record.attendanceDate,
+                    text = formatAttendanceDate(record.attendanceDate),
                     style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f)
                 )
                 StatusChip(status = record.status)
             }
 
-            HistoryInfoRow(label = "Clock In", value = record.clockIn ?: "--")
-            HistoryInfoRow(label = "Clock Out", value = record.clockOut ?: "--")
+            HistoryInfoRow(label = "Clock In", value = formatClockTime(record.clockIn))
+            HistoryInfoRow(label = "Clock Out", value = formatClockTime(record.clockOut))
             HistoryInfoRow(
                 label = "Working Hours",
                 value = record.workingMinutes?.let { formatWorkingMinutes(it) } ?: "--"

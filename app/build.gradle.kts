@@ -21,12 +21,29 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("ATTENDANCE_KEYSTORE_PATH")
+                    ?: providers.gradleProperty("ATTENDANCE_KEYSTORE_PATH").get()
+            )
+
+            storePassword = System.getenv("ATTENDANCE_KEYSTORE_PASSWORD")
+                    ?: providers.gradleProperty("ATTENDANCE_KEYSTORE_PASSWORD").get()
+
+            keyAlias = System.getenv("ATTENDANCE_KEY_ALIAS")
+                    ?: providers.gradleProperty("ATTENDANCE_KEY_ALIAS").get()
+
+            keyPassword = System.getenv("ATTENDANCE_KEY_PASSWORD")
+                    ?: providers.gradleProperty("ATTENDANCE_KEY_PASSWORD").get()
+        }
     }
 
     buildTypes {
         release {
             optimization {
+                signingConfig = signingConfigs.getByName("release")
                 enable = false
             }
         }

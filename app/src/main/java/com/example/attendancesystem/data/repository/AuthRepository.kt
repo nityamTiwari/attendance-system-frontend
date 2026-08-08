@@ -5,12 +5,10 @@ import com.example.attendancesystem.data.model.request.RegisterRequest
 import com.example.attendancesystem.data.model.response.LoginResponse
 import com.example.attendancesystem.data.model.response.RegisterResponse
 import com.example.attendancesystem.network.AuthApi
-import com.example.attendancesystem.network.ErrorParser
+import com.example.attendancesystem.network.NetworkErrorMapper
 import com.example.attendancesystem.network.NetworkResult
-import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
-import retrofit2.Response
 
 @Singleton
 class AuthRepository @Inject constructor(
@@ -25,18 +23,12 @@ class AuthRepository @Inject constructor(
             if (response.isSuccessful && response.body() != null) {
                 NetworkResult.Success(response.body()!!)
 
-
             } else {
-                NetworkResult.Error(
-                    ErrorParser.parse(
-                        response.errorBody()?.string()
-                    )
-                )
+                NetworkErrorMapper.fromResponse(response)
             }
 
-
         } catch (e: Exception) {
-            NetworkResult.Error(e.message ?: "Something went wrong")
+            NetworkErrorMapper.fromException(e)
         }
 
     }
@@ -53,17 +45,11 @@ class AuthRepository @Inject constructor(
             if(response.isSuccessful && response.body()!=null){
                 NetworkResult.Success(response.body()!!)
             }else{
-                NetworkResult.Error(
-                    ErrorParser.parse(
-                        response.errorBody()?.string()
-                    )
-                )
+                NetworkErrorMapper.fromResponse(response)
             }
         }catch (e: Exception) {
 
-            NetworkResult.Error(
-                e.message ?: "Something went wrong"
-            )
+            NetworkErrorMapper.fromException(e)
         }
     }
 

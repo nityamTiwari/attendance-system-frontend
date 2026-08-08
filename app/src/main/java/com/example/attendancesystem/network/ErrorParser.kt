@@ -13,6 +13,7 @@ object ErrorParser {
                 errorBody,
                 ErrorResponse::class.java
             )
+
             error.error ?: "Something went wrong"
 
         } catch (e: Exception) {

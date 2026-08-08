@@ -54,22 +54,13 @@ fun AttendanceNavGraph(navController: NavHostController,
                     }
                 },
                 onNavigateToRegister = {
-                    navController.navigate(AppDestinations.Register.route) {
-                        navController.navigate(AppDestinations.Register.route)
-                    }
+                    navController.navigate(AppDestinations.Register.route)
                 }
             )
         }
 
         composable(route = AppDestinations.Home.route) {
-            HomeRoute(
-                onNavigateToHistory = {
-                    navController.navigate(AppDestinations.History.route)
-                },
-                onNavigateToProfile = {
-                    navController.navigate(AppDestinations.Profile.route)
-                }
-            )
+            HomeRoute()
         }
 
         composable(route = AppDestinations.History.route) {
