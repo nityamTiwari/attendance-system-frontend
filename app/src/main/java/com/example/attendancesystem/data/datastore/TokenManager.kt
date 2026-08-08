@@ -73,7 +73,6 @@ class TokenManager @Inject constructor(
         )
     }
 
-    /** Called after a successful Register - we have the full set of fields the user typed in. */
     suspend fun saveProfile(profile: LocalProfile) {
         context.dataStore.edit { preferences ->
             profile.firstName?.let { preferences[PreferencesKeys.FIRST_NAME] = it }
@@ -85,11 +84,7 @@ class TokenManager @Inject constructor(
         }
     }
 
-    /**
-     * Called after a successful Login. Only fills in the email if there's no local profile
-     * yet on this device (e.g. fresh install, logging into an existing account) - never
-     * overwrites a fuller profile that Register already saved.
-     */
+
     suspend fun saveEmailIfProfileMissing(email: String) {
         val existing = profile.first()
         if (existing.isEmpty) {
