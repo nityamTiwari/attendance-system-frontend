@@ -84,7 +84,6 @@ class TokenManager @Inject constructor(
         }
     }
 
-
     suspend fun saveEmailIfProfileMissing(email: String) {
         val existing = profile.first()
         if (existing.isEmpty) {
