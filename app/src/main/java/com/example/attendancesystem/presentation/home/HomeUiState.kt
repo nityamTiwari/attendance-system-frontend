@@ -22,6 +22,8 @@ data class HomeUiState(
 
     val recentAttendance: List<AttendanceResponse> = emptyList(),
 
+    val profileInitials: String = "?",
+
     val error: String? = null
 
 )

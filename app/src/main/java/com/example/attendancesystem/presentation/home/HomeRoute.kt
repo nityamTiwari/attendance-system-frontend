@@ -7,8 +7,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun HomeRoute(
-    onNavigateToHistory: () -> Unit,
-    onNavigateToProfile: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel()
 
 ) {
@@ -19,9 +17,7 @@ fun HomeRoute(
         uiState = uiState,
         onRetry = viewModel::getTodayAttendance,
         onRefresh = viewModel::refresh,
-        onClockInClick = viewModel::attendanceAction,
-        onNavigateToHistory = onNavigateToHistory,
-        onNavigateToProfile = onNavigateToProfile
+        onClockInClick = viewModel::attendanceAction
     )
 
 }

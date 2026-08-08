@@ -2,9 +2,12 @@ package com.example.attendancesystem.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.attendancesystem.data.datastore.TokenManager
 import com.example.attendancesystem.data.model.response.TodayAttendanceResponse
 import com.example.attendancesystem.data.repository.AttendanceRepository
 import com.example.attendancesystem.network.NetworkResult
+import com.example.attendancesystem.presentation.components.avatarInitials
+import com.example.attendancesystem.presentation.components.formatClockTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val repository: AttendanceRepository
+    private val repository: AttendanceRepository,
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _uistate = MutableStateFlow(HomeUiState())
@@ -23,6 +27,19 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadDashboard(isRefresh = false)
+        observeProfile()
+    }
+
+    // Same locally-cached profile the Profile screen reads (see TokenManager/LocalProfile) -
+    // once a real GET /me endpoint exists, this is the only place that needs to change.
+    private fun observeProfile() {
+        viewModelScope.launch {
+            tokenManager.profile.collect { profile ->
+                _uistate.update {
+                    it.copy(profileInitials = avatarInitials(profile.firstName, profile.lastName))
+                }
+            }
+        }
     }
 
     /** Pull-to-refresh / retry entry point: reloads today's status and the recent history preview. */
@@ -75,9 +92,9 @@ class HomeViewModel @Inject constructor(
         _uistate.update {
             it.copy(
                 status = response.status,
-                clockIn = response.clockIn ?: "--",
-                clockOut = response.clockOut ?: "--",
-                workingTime = response.workingMinutes?.let { minutes -> "$minutes min" } ?: "00:00",
+                clockIn = formatClockTime(response.clockIn),
+                clockOut = formatClockTime(response.clockOut),
+                workingTime = "${response.workingMinutes} min",
                 buttonText = buttonText,
                 buttonEnabled = buttonEnabled,
                 isLoading = false

@@ -7,25 +7,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Group
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
-// Requires androidx.compose.material3:material3 1.3.0+ (stable PullToRefreshBox API).
-// If the module's Material3 version predates this, either bump it or drop this import
-// and the PullToRefreshBox wrapper below in favor of a manual refresh button.
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.attendancesystem.data.model.response.AttendanceResponse
+import com.example.attendancesystem.presentation.components.StatusChip
+import com.example.attendancesystem.presentation.components.formatAttendanceDate
+import com.example.attendancesystem.presentation.components.formatClockTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,24 +27,17 @@ fun HomeScreen(
     uiState: HomeUiState,
     onRetry: () -> Unit,
     onRefresh: () -> Unit,
-    onClockInClick: () -> Unit,
-    onNavigateToHistory: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onClockInClick: () -> Unit
 ) {
 
-    // Scaffold manages the layout of TopBar, BottomBar, and Content
+    // Bottom nav now lives in AttendanceApp as a persistent app-shell utility (see
+    // presentation/components/AppBottomBar.kt) so it stays visible/functional across every
+    // screen instead of being owned by Home alone - this Scaffold only needs a topBar.
     Scaffold(
-        topBar = { DashboardTopBar() },
-        bottomBar = {
-            DashboardBottomBar(
-                onHistoryClick = onNavigateToHistory,
-                onProfileClick = onNavigateToProfile
-            )
-        },
+        topBar = { DashboardTopBar(initials = uiState.profileInitials) },
         containerColor = MaterialTheme.colorScheme.background
     ) { paddingValues ->
 
-        // Handle Loading and Error states gracefully
         when {
             uiState.isLoading -> {
                 Box(
@@ -96,7 +83,7 @@ fun HomeScreen(
 
 // ---  Header Component ---
 @Composable
-fun DashboardTopBar() {
+fun DashboardTopBar(initials: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,10 +92,9 @@ fun DashboardTopBar() {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Profile Avatar Placeholder
-        // TODO: backend has no GET /me or /profile endpoint yet, so the initials/name here
-        // can't be populated from real data. Swap this for the logged-in employee's initials
-        // once a profile endpoint exists.
+        // Profile Avatar - same first/last-name-initials logic as the Profile screen, sourced
+        // from the locally cached profile (TokenManager). Swap for a real employee photo/name
+        // once a backend GET /me endpoint exists.
         Box(
             modifier = Modifier
                 .size(40.dp)
@@ -117,7 +103,7 @@ fun DashboardTopBar() {
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "NK",
+                text = initials,
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -151,36 +137,6 @@ fun DashboardTopBar() {
             }
         }
     }
-}
-
-// ---  Bottom Navigation Component ---
-@Composable
-fun DashboardBottomBar(onHistoryClick: () -> Unit, onProfileClick: () -> Unit) {
-    NavigationBar {
-        BottomNavItem(label = "Home", icon = Icons.Filled.Home, selected = true)
-        BottomNavItem(label = "Inbox", icon = Icons.Outlined.Email, selected = false)
-        // "Wall" doubles as the entry point into Attendance History for now - the list icon
-        // is the closest fit among the existing placeholder items. TODO: revisit if/when
-        // Inbox/My Team get real screens of their own.
-        BottomNavItem(label = "Wall", icon = Icons.Outlined.List, selected = false, onClick = onHistoryClick)
-        BottomNavItem(label = "Me", icon = Icons.Outlined.Person, selected = false, onClick = onProfileClick)
-        BottomNavItem(label = "My Team", icon = Icons.Outlined.Group, selected = false)
-    }
-}
-
-@Composable
-fun RowScope.BottomNavItem(
-    label: String,
-    icon: ImageVector,
-    selected: Boolean,
-    onClick: () -> Unit = { /* TODO: Implement Navigation */ }
-) {
-    NavigationBarItem(
-        icon = { Icon(imageVector = icon, contentDescription = label) },
-        label = { Text(label) },
-        selected = selected,
-        onClick = onClick
-    )
 }
 
 // ---  Main Content Component ---
@@ -314,6 +270,7 @@ fun RecentAttendanceSection(recentAttendance: List<AttendanceResponse>) {
     }
 }
 
+
 @Composable
 fun RecentAttendanceRow(record: AttendanceResponse) {
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -324,15 +281,20 @@ fun RecentAttendanceRow(record: AttendanceResponse) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column {
-                Text(text = record.attendanceDate, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "${record.clockIn ?: "--"} - ${record.clockOut ?: "--"}",
+                    text = formatAttendanceDate(record.attendanceDate),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = "${formatClockTime(record.clockIn)} - ${formatClockTime(record.clockOut)}",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline
                 )
             }
-            Text(text = record.status, style = MaterialTheme.typography.labelMedium)
+            Spacer(modifier = Modifier.width(8.dp))
+            StatusChip(status = record.status)
         }
     }
 }
