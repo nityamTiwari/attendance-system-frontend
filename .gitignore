@@ -18,3 +18,4 @@ local.properties
 .bundle/
 vendor/bundle/
 .idea/
+fastlane/report.xml
