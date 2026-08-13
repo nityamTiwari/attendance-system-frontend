@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.attendancesystem"
+    namespace = "com.nityam.attendancesystem"
     compileSdk {
         version = release(37) {
             minorApiLevel = 1
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.attendancesystem"
+        applicationId = "com.nityam.attendancesystem"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -42,8 +42,8 @@ android {
 
     buildTypes {
         release {
+            signingConfig = signingConfigs.getByName("release")
             optimization {
-                signingConfig = signingConfigs.getByName("release")
                 enable = false
             }
         }
@@ -64,7 +64,6 @@ android {
 }
 
 dependencies {
-    // Existing Dependencies
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
@@ -107,7 +106,7 @@ dependencies {
 
     // Coil Compose
     implementation(libs.coil.compose)
-    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.compose.material.icons.extended)
 
 
 }
