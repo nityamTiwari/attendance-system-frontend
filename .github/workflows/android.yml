@@ -27,7 +27,7 @@ jobs:
       - name: Set Up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.3"
+          ruby-version: "3.1"
           bundler-cache: false
 
 
@@ -61,9 +61,3 @@ jobs:
         with:
           name: attendance-system-release
           path: app/build/outputs/bundle/release/app-release.aab
-
-
-
-
-
-
