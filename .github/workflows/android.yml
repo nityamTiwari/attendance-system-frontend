@@ -36,7 +36,7 @@ jobs:
           bundle config set --local path vendor/bundle
 
       - name: Install Fastlane dependencies
-        run: bundle Install
+        run: bundle install
 
       - name: Run Test
         run: bundle exec fastlane test
