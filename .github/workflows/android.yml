@@ -28,7 +28,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3.12"
-          bundler-cache: true
+          bundler-cache: false
 
 
       - name: Configure Bundler
@@ -51,7 +51,7 @@ jobs:
         env:
           FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
-           echo "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json" 
+           printf '%s' "$FIREBASE_SERVICE_ACCOUNT_JSON" > "$RUNNER_TEMP/firebase-service-account.json" 
 
       - name: Build and Distribute APK
         env:
