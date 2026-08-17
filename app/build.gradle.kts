@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -107,6 +108,10 @@ dependencies {
     // Coil Compose
     implementation(libs.coil.compose)
     implementation(libs.androidx.compose.material.icons.extended)
+
+    //firebase
+    implementation(platform("com.google.firebase:firebase-bom:34.17.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
 
 }
