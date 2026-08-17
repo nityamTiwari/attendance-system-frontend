@@ -22,3 +22,4 @@ vendor/bundle/
 .idea/
 fastlane/report.xml
 app/keystore
+.ruby-version
