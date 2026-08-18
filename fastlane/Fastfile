@@ -16,6 +16,7 @@ platform :android do
     service_credentials_file: ENV["GOOGLE_APPLICATION_CREDENTIALS"],
     android_artifact_type: "APK",
     android_artifact_path: "app/build/outputs/apk/release/app-release.apk",
+    groups: "internal-tester",
     release_notes: "Automated CI build"
     )
   end
