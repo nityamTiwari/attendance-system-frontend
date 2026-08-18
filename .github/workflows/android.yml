@@ -5,9 +5,9 @@ on:
     branches:
       - master
   pull_request:
-      branches:
-        - master
-        - dev-team
+    branches:
+      - master
+      - dev-team
 
 
 jobs:
