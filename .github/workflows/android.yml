@@ -5,15 +5,9 @@ on:
     branches:
       - master
   pull_request:
-<<<<<<< Updated upstream
     branches:
       - master
       - dev-team
-=======
-      branches:
-        - master
-        - dev-team
->>>>>>> Stashed changes
 
 
 jobs:
