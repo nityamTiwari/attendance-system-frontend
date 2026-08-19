@@ -43,7 +43,7 @@ jobs:
         run: bundle exec fastlane test
 
       - name: Restore Android Keystore
-        if: github.event_name == 'push' && github.ref == 'ref/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
         run: |
