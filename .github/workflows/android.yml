@@ -29,15 +29,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.3.12"
-          bundler-cache: false
-
-
-      - name: Configure Bundler
-        run: |
-          bundle config set --local path vendor/bundle
-
-      - name: Install Fastlane dependencies
-        run: bundle install
+          bundler-cache: true
 
       - name: Run Test
         run: bundle exec fastlane test
