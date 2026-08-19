@@ -19,7 +19,7 @@ android {
         applicationId = "com.nityam.attendancesystem"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20260819
+        versionCode = 20260820
         versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
